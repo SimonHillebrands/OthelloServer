@@ -8,7 +8,8 @@ import javax.swing.*;
 
 public class GameClient {
 		
-   public GameFrame gui;
+   ///public GameFrame gui;
+   public OthelloGUI gui;
 
    private Socket socket;
    private DataInputStream in;
@@ -17,10 +18,18 @@ public class GameClient {
    String[][] board;
    public GameClient(String server,int port,boolean host,int id) {
       
-      gui = new GameFrame("Othello");
+
+
+
+      // gui = new GameFrame("Othello");
+      // 
+      // gui.input.addKeyListener (new EnterListener(this,gui));
+      // gui.addWindowListener(new ExitListener(this));
+
+
+      gui = new OthelloGUI(this);
       board = new String[8][8];
-      gui.input.addKeyListener (new EnterListener(this,gui));
-      gui.addWindowListener(new ExitListener(this));
+
       this.turn = host;
       try {
          ServerSocket wsocket = new ServerSocket(port);
@@ -44,15 +53,17 @@ public class GameClient {
             for(int i = 0; i<8;i++){ 
                for(int j = 0; j<8;j++){
                   board[i][j] = str[counter];
-                  gui.output.append(" "+board[i][j]);
+
+                 // gui.output.append(" "+board[i][j]);
+
                   if(board[i][j].equals("P")){
                      flag = true;
                   }
                   counter++; 
                }
-               gui.output.append("\n");
+
             }
-            gui.output.append("\n\n");
+            gui.setBoard(board);
             if(flag){
                this.turn = true;
             }else{
@@ -65,22 +76,23 @@ public class GameClient {
       }
    }
    
-
-   protected void sendTextToGame(String str) {
+   protected void sendTextToGame(int row, int col) {
       try {
          if(this.turn){
-            String[] splt = str.split(" ");
-            int row = Integer.parseInt(splt[0]);
-            int col = Integer.parseInt(splt[1]);
-            row--;
-            col--;
+            // String[] splt = str.split(" ");
+            // int row = Integer.parseInt(splt[0]);
+            // int col = Integer.parseInt(splt[1]);
+            // row--;
+            // col--;
+            String r = String.valueOf(row+1);
+            String c = String.valueOf(col+1);
             if(board[row][col].equals("P")){
-               out.writeUTF(str);
+               out.writeUTF(r + " "+ c);
             }else{
-               gui.output.append("Invalid move!");
+              // gui.output.append("Invalid move!");
             }
          }else{
-            gui.output.append("\n It's not your turn!");
+            //gui.output.append("\n It's not your turn!");
          }
          
       } catch (IOException e) {
@@ -88,6 +100,28 @@ public class GameClient {
          //e.printStackTrace();
       }
    }
+   // protected void sendTextToGame(String str) {
+   //    try {
+   //       if(this.turn){
+   //          String[] splt = str.split(" ");
+   //          int row = Integer.parseInt(splt[0]);
+   //          int col = Integer.parseInt(splt[1]);
+   //          row--;
+   //          col--;
+   //          if(board[row][col].equals("P")){
+   //             out.writeUTF(str);
+   //          }else{
+   //             gui.output.append("Invalid move!");
+   //          }
+   //       }else{
+   //          gui.output.append("\n It's not your turn!");
+   //       }
+         
+   //    } catch (IOException e) {
+   //       System.out.println("Something went wrong!!!");
+   //       //e.printStackTrace();
+   //    }
+   // }
 
    protected void disconnect() {
       try {
@@ -120,8 +154,8 @@ public class GameClient {
          String sentence = inFromUser.readLine();
          StringTokenizer tokens = new StringTokenizer(sentence);
 
-         String in = inFromServer.readUTF();
-         System.out.println(in);
+         //String in = inFromServer.readUTF();
+        // System.out.println(in);
          if(sentence.startsWith("create")){
             try{
                outToServer.writeUTF("1");

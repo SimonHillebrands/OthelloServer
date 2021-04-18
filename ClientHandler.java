@@ -28,7 +28,8 @@ public class ClientHandler extends Thread {
          handlers.addElement (this); 
 
          while (true) { 
-            out.writeUTF("this big ol string");
+            //out.writeUTF("this big ol string");
+            
             String isHost = in.readUTF();
             if(isHost.equals("1")){
                 System.out.println ("New game from " + this.inet);

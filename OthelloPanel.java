@@ -14,8 +14,12 @@ public class OthelloPanel extends JPanel{
     private JMenuItem newGameItem;
     //private Othello game;
     private int [][] board1 = new int[8][8];
+    GameClient client;
 
-    public OthelloPanel(JMenuItem pQuitItem) {
+    public OthelloPanel(JMenuItem pQuitItem, GameClient client) {
+
+        this.client = client;
+
         quitItem = pQuitItem;
         listen = new ButtonListener();
         setLayout(new BorderLayout());
@@ -40,7 +44,7 @@ public class OthelloPanel extends JPanel{
             for(int row = 0; row<8; row++){
                 for(int col = 0; col<8; col++){
                     if(board[row][col] == e.getSource()){
-
+                        client.sendTextToGame(row, col);
                     }
                 }
             }
@@ -61,6 +65,25 @@ public class OthelloPanel extends JPanel{
                 panel1.add(board[i][j]);
             }
         }
+    }
+    public void updateBoard(String[][] input){
+        for(int i = 0; i< 8; i++){
+            for(int j = 0 ;j <8; j++){
+                int n = 0;
+                String p = input[i][j];
+                if(p.equals("B")){
+                    n = -1;
+                }
+                if(p.equals("W")){
+                    n = 1;
+                }
+                if(p.equals("P")){
+                    n = 2;
+                }
+                board1[i][j] = n;
+            }
+        }
+        displayBoard(board1);
     }
 
 

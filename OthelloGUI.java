@@ -2,16 +2,19 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class OthelloGUI {
+class OthelloGUI {
+    OthelloPanel p;
+    GameClient client;
 
-
-    public static void main (String[] args){
+    public OthelloGUI(GameClient client){
         JButton [][] board = new JButton[8][8];
         JPanel panel;
         JMenuItem quitItem;
         JMenuItem newGameItem;
         JMenuBar menus;
         JMenu fileMenu;
+
+        this.client = client;
 
         JFrame frame = new JFrame ("Othello");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,14 +35,19 @@ public class OthelloGUI {
         frame.add(panel, BorderLayout.CENTER);
         
 
-        OthelloPanel p = new OthelloPanel(quitItem);
+        this.p = new OthelloPanel(quitItem, client);
         frame.add(p);
         frame.setSize(600,600);
         frame.setVisible(true);
 
+    }
+    public void setBoard(String[][] b){
+        this.p.updateBoard(b);
+    }
 
-
-
+    public static void main (String[] args){
+    
+        //new OthelloGUI(this);
 
     }
 

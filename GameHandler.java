@@ -34,6 +34,8 @@ public class GameHandler extends Thread {
       hostOut = new DataOutputStream(hostSocket.getOutputStream());
       hostOut.writeUTF(game.getPossibleBoardString());
 
+      System.out.println(game.getPossibleBoardString());
+
       guestIn = new DataInputStream(guestSocket.getInputStream());
       guestOut = new DataOutputStream(guestSocket.getOutputStream());
 
