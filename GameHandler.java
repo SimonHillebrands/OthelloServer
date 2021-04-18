@@ -20,22 +20,22 @@ public class GameHandler extends Thread {
 
    Othello game;
 
-   protected static Vector handlers = new Vector ();
     
-   public GameHandler (String name, Socket host, Socket guest, int id) throws IOException { 
+   public GameHandler (String name, InetAddress host, InetAddress guest, int id, int port1, int port2) throws IOException { 
       this.name = name;
-      this.hostSocket = host;
+      //this.hostSocket = host;
       this.id = id; 
       this.game = new Othello();
-      this.guestJoined = false;
-      hostIn = new DataInputStream(host.getInputStream());
-      hostOut = new DataOutputStream(host.getOutputStream());
+
+      Socket hostSocket = new Socket(host, port1);
+      Socket guestSocket = new Socket(guest, port2);
+
+      hostIn = new DataInputStream(hostSocket.getInputStream());
+      hostOut = new DataOutputStream(hostSocket.getOutputStream());
       hostOut.writeUTF(game.getPossibleBoardString());
 
-
-      this.guestSocket = guest;
-      guestIn = new DataInputStream(guest.getInputStream());
-      guestOut = new DataOutputStream(guest.getOutputStream());
+      guestIn = new DataInputStream(guestSocket.getInputStream());
+      guestOut = new DataOutputStream(guestSocket.getOutputStream());
 
       guestOut.writeUTF(game.getBoardString());
    } 
@@ -43,8 +43,6 @@ public class GameHandler extends Thread {
    public void run () { 
 
       try { 
-         //handlers.addElement(this); 
-
          while (true) { 
                driver();           
          } 
@@ -52,7 +50,6 @@ public class GameHandler extends Thread {
       } catch (IOException ex) { 
          System.out.println("-- Connection to user lost.");
       } finally { 
-         //handlers.removeElement (this); 
          try { 
             this.hostSocket.close();
             if(guestJoined){
@@ -113,20 +110,4 @@ public class GameHandler extends Thread {
       }
       
    }
-
-   // protected static void broadcast (String message) { 
-   //    synchronized (handlers) { 
-   //       Enumeration e = handlers.elements (); 
-   //       while (e.hasMoreElements()) { 
-   //          ChatHandler handler = (ChatHandler) e.nextElement(); 
-   //          try { 
-   //             handler.out.writeUTF(message);
-   //             handler.out.flush();
-   //          } catch (IOException ex) { 
-   //             handler.stop (); 
-   //          } 
-   //       }
-   //    }
-   // } 
 }
-

@@ -23,20 +23,20 @@ public class GameClient {
       gui.addWindowListener(new ExitListener(this));
       this.turn = host;
       try {
-
-         socket = new Socket(server,port);
+         ServerSocket wsocket = new ServerSocket(port);
+         socket = wsocket.accept();
 
          in = new DataInputStream(socket.getInputStream());
          out = new DataOutputStream(socket.getOutputStream());
 
-         String b;
-         if(host){
-            b = "1";
-         }else{
-            b = "0";
-         }
-         out.writeUTF(b);
-
+         // String b;
+         // if(host){
+         //    b = "1";
+         // }else{
+         //    b = "0";
+         // }
+         // out.writeUTF(b);
+         
          while (true) {
             String[] str = in.readUTF().split("");
             int counter = 0;
@@ -98,38 +98,53 @@ public class GameClient {
    }
 		
    public static void main (String args[])throws IOException {
-       BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in)); 
-       String sentence = inFromUser.readLine();
-       StringTokenizer tokens = new StringTokenizer(sentence);
+      BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in)); 
 
-       boolean clientgo = true;
-       String server = "127.0.0.1";
-       int port = 3030;
-      // Socket ControlSocket= new Socket(server, port);
-       System.out.println("Welcome to the game");
-       while(clientgo){
-         // DataOutputStream outToServer = new DataOutputStream(ControlSocket.getOutputStream()); 
-         // DataInputStream inFromServer = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
 
+      boolean clientgo = true;
+      String server = "127.0.0.1";
+      int port = 3030;
+
+      Socket ControlSocket= new Socket(server, port);
+      DataOutputStream outToServer = new DataOutputStream(ControlSocket.getOutputStream()); 
+
+      DataInputStream inFromServer = new DataInputStream(ControlSocket.getInputStream());
+      String[] gameList = new String[5];
+
+      boolean startC = false;
+      boolean startJ = false;
+      
+
+      System.out.println("Welcome to the game");
+      while(clientgo){
+         String sentence = inFromUser.readLine();
+         StringTokenizer tokens = new StringTokenizer(sentence);
+
+         String in = inFromServer.readUTF();
+         System.out.println(in);
          if(sentence.startsWith("create")){
             try{
-               GameClient c = new GameClient(server,port,true,0);
+               outToServer.writeUTF("1");
+               //startC = true;
+                GameClient c = new GameClient(server,port+1,true,0);
             }catch (Exception e)	{ 
                e.printStackTrace();
                System.out.println("Connection Failed");
                clientgo = false;
             }
-         }
-         else if(sentence.startsWith("join")){
+            }
+            else if(sentence.startsWith("join")){
             try{
-               GameClient c = new GameClient(server,port,false,0);
+               outToServer.writeUTF("0");
+               GameClient c = new GameClient(server,port+2,false,0);
+               //startJ = true;
             }catch (Exception e)	{ 
                e.printStackTrace();
                System.out.println("Connection Failed");
                clientgo = false;
             }
-         }
-         else{
+            }
+            else{
             if(sentence.equals("close")){
                clientgo = false;
                System.out.println("Bye Bye!");
@@ -137,7 +152,7 @@ public class GameClient {
                System.out.print("wut");
             }
          }
-       }       
+      }       
    }
 }
 

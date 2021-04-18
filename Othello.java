@@ -45,7 +45,7 @@ public class Othello{
 		return false;  		
   	}
 	boolean checkRows(int row, int col,boolean flip){
-		if(board[col][row] != 0){
+		if(board[row][col] != 0){
 			return false;
 		}
 		boolean flag = false;
@@ -69,9 +69,9 @@ public class Othello{
 	}
 	boolean isValidMoveAvailable(){
 		for(int i = 0;i<possibleMoves.size();i++){
-			System.out.print(possibleMoves.get(i)[0]);
+			System.out.print(possibleMoves.get(i)[0]+1);
 			System.out.print(" , ");
-			System.out.println(possibleMoves.get(i)[1]);
+			System.out.println(possibleMoves.get(i)[1]+1);
 		}
 		if(possibleMoves.size() == 0){
 			return false;
