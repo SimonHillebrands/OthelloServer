@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.concurrent.Flow;
+
 
 public class OthelloGUI {
 
@@ -12,17 +10,12 @@ public class OthelloGUI {
         JPanel panel;
         JMenuItem quitItem;
         JMenuItem newGameItem;
-        Othello game;
         JMenuBar menus;
         JMenu fileMenu;
 
         JFrame frame = new JFrame ("Othello");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600,600);
-        frame.setVisible(true);
 
-        Container cp = frame.getContentPane();
-        cp.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 
         //this is creating the option file at the top of the panel (like the little bar thing) with two options, quit and new game
         fileMenu = new JMenu ("File");
@@ -37,13 +30,15 @@ public class OthelloGUI {
 
         panel = new JPanel();
         frame.add(panel, BorderLayout.CENTER);
+        
 
-        for(int i = 0; i<8; i++){
-            for(int j = 0; j<8; j++){
-                board[i][j] = new JButton("");
-                cp.add(board[i][j]);
-            }
-        }
+        OthelloPanel p = new OthelloPanel(quitItem);
+        frame.add(p);
+        frame.setSize(600,600);
+        frame.setVisible(true);
+
+
+
 
 
     }

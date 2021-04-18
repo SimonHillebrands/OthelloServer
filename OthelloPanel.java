@@ -6,25 +6,22 @@ import javax.swing.*;
 public class OthelloPanel extends JPanel{
 
     private JButton [][] board;
+
     private JPanel panel1;
     private int player;
     private ButtonListener listen;
     private JMenuItem quitItem;
     private JMenuItem newGameItem;
-    private Othello game;
-
+    //private Othello game;
+    private int [][] board1 = new int[8][8];
 
     public OthelloPanel(JMenuItem pQuitItem) {
         quitItem = pQuitItem;
         listen = new ButtonListener();
-
-
         setLayout(new BorderLayout());
         panel1 = new JPanel();
-
         createBoard(8, 8);
         add(panel1, BorderLayout.CENTER);
-        game = new Othello();
         quitItem.addActionListener(listen);
     }
 
@@ -35,12 +32,19 @@ public class OthelloPanel extends JPanel{
                 System.exit(1);
             }
             if (e.getSource() == newGameItem) {
-                game = new Othello();
-                displayBoard(8, 8);
+                //game = new Othello();
+                displayBoard(board1);
                 //reset();
             }
 
-            displayBoard(8,8);
+            for(int row = 0; row<8; row++){
+                for(int col = 0; col<8; col++){
+                    if(board[row][col] == e.getSource()){
+
+                    }
+                }
+            }
+            displayBoard(board1);
 
             }
 
@@ -59,15 +63,23 @@ public class OthelloPanel extends JPanel{
         }
     }
 
-    private void displayBoard(int r, int c){
-        for(int row = 0; row < r; row++){
-            for(int col = 0; col < c; col++){
-                int d = game.getCell(row, col);
-                if(d != 0){
-                    board[row][col].setText("???" );// d.getPlayerNumber());
+
+    private void displayBoard(int [][] b){
+        this.board1 = b;
+        for(int i = 0; i<8; i++){
+            for(int j = 0; j<8; j++){
+                if(b[i][j] == -1){
+                    board[i][j].setBackground(Color.BLACK);
                 }
-                else
-                    board[row][col].setText("");
+                else if(b[i][j] == 1){
+                    board[i][j].setBackground(Color.WHITE);
+                }
+                else if(b[i][j] == 2){
+                    board[i][j].setBackground(Color.RED);
+                }
+                else{
+                    board[i][j].setBackground(Color.GREEN);
+                }
             }
         }
     }
