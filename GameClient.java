@@ -16,10 +16,12 @@ public class GameClient {
    private DataOutputStream out;
    boolean turn;
    String[][] board;
+   boolean isRunning;
    public GameClient(String server,int port,boolean host,int id) {
       
       gui = new OthelloGUI(this);
       board = new String[8][8];
+      isRunning = true;
 
       this.turn = host;
       try {
@@ -37,7 +39,7 @@ public class GameClient {
          // }
          // out.writeUTF(b);
          
-         while (true) {
+         while (isRunning) {
             String[] str = in.readUTF().split("");
             int counter = 0;
             boolean flag = false;
@@ -100,7 +102,7 @@ public class GameClient {
       String sentence;
 
 
-      System.out.println("Welcome to the Othello game \n Commands: \nconnect servername port# connects to a specified server \nlist: lists available games with the gameID \n create creates a new game \njoin gameID Joins the game with the id gameID \n close terminates the program");
+      System.out.println("Welcome to the Othello game \n Commands:\nconnect servername port# connects to a specified server \nlist: lists available games with the gameID\n create creates a new game\njoin gameID Joins the game with the id gameID\n close terminates the program");
       BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in)); 
 
       sentence = inFromUser.readLine();
@@ -114,7 +116,7 @@ public class GameClient {
          DataInputStream inFromServer = new DataInputStream(ControlSocket.getInputStream());
 
          System.out.println("You are connected to the server\n");
-         
+
          while(clientgo){
             sentence = inFromUser.readLine();
             tokens = new StringTokenizer(sentence);

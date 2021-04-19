@@ -44,6 +44,22 @@ class OthelloGUI {
     public void setBoard(String[][] b){
         this.p.updateBoard(b);
     }
+    public void invalidMovePopup(){
+        JFrame e = new JFrame();
+        JOptionPane.showMessageDialog(e, "Invalid Move", "Alert",JOptionPane.WARNING_MESSAGE);
+    }
+    public void notTurnTurnPopup(){
+        JFrame e = new JFrame();
+        JOptionPane.showMessageDialog(e, "It's not your turn!", "Alert",JOptionPane.WARNING_MESSAGE);
+    }
+    public void declareWinnerBlackPopup() {
+        JFrame e = new JFrame();
+        JOptionPane.showMessageDialog(e, "Black is the winner!!");
+    }
+    public void declareWinnerWhitePopup() {
+        JFrame e = new JFrame();
+        JOptionPane.showMessageDialog(e, "White is the winner!!");
+    }
 
     public static void main (String[] args){
     

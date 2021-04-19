@@ -52,7 +52,7 @@ public class OthelloPanel extends JPanel{
 
             }
 
-    }
+        }
 
     private void createBoard(int r, int c){
         board = new JButton[r][c];
