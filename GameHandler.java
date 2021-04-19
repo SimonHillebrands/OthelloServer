@@ -1,6 +1,5 @@
 import java.net.*; 
 import java.io.*; 
-import java.util.*;
 
 public class GameHandler extends Thread { 
     
@@ -23,7 +22,6 @@ public class GameHandler extends Thread {
     
    public GameHandler (String name, InetAddress host, InetAddress guest, int id, int port1, int port2) throws IOException { 
       this.name = name;
-      //this.hostSocket = host;
       this.id = id; 
       this.game = new Othello();
 
@@ -63,16 +61,6 @@ public class GameHandler extends Thread {
          }  
       }
    }
-   public void join(Socket socket)throws IOException { 
-      this.guestSocket = socket;
-      this.guestJoined = true;
-      guestIn = new DataInputStream(socket.getInputStream());
-      guestOut = new DataOutputStream(socket.getOutputStream());
-
-      guestOut.writeUTF(game.getBoardString());
-   }
-
-
    void driver() throws IOException {
       
       String line;

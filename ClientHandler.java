@@ -10,9 +10,9 @@ public class ClientHandler extends Thread {
    String name;
    InetAddress inet;
    int count = 0;
-   GameHandler[] games = new GameHandler[5];
-   protected static InetAddress[] hosts = new InetAddress[5];
-   protected static Vector handlers = new Vector ();
+   protected static ArrayList<GameHandler> games = new ArrayList<GameHandler>();
+   protected static ArrayList<InetAddress> hosts = new ArrayList<InetAddress>();
+   protected static ArrayList<Boolean> available = new ArrayList<Boolean>();
     
    public ClientHandler (String name, Socket socket, InetAddress inet) throws IOException { 
       this.name = name;
@@ -23,33 +23,48 @@ public class ClientHandler extends Thread {
    } 
     
    public void run () { 
-
       try { 
-         handlers.addElement (this); 
-
          while (true) { 
-            //out.writeUTF("this big ol string");
+
+            //inital command from client
+            String command = in.readUTF();
             
-            String isHost = in.readUTF();
-            if(isHost.equals("1")){
+            if(command.equals("create")){
                 System.out.println ("New game from " + this.inet);
-                hosts[count] = this.inet;
-                broadcast(String.valueOf(count));
-        
-            }else{
-                games[count] = new GameHandler("name", hosts[0],this.inet,count, 3031, 3032); 
-                games[count].start(); 
-                System.out.println("Client " + this.inet+" joined game "+ count);
-                count++;
-                broadcast(String.valueOf("true"));
+                hosts.add(this.inet);
+                available.add(true);
+                out.writeUTF(String.valueOf(hosts.size()-1));      
+            }
+            else if(command.equals("join")){
+                int gameID = Integer.parseInt(in.readUTF());
+                if(gameID>=hosts.size()){
+                   //this game does not exist
+                   out.writeUTF("0");
+                }else if(!available.get(gameID)){
+                   //this game is unavailable
+                   out.writeUTF("1");
+                }else{
+                  //The game is found
+                  out.writeUTF("2");
+                  games.add(new GameHandler("name", hosts.get(gameID),this.inet,count, 3031, 3032)); 
+                  games.get(games.size()-1).start(); 
+                  System.out.println("Client " + this.inet+" joined game "+ gameID);
+                  available.set(gameID,false);
+                }
+
+
+            }else if(command.equals("list:")){
+               String str = "";
+               for(int i = 0;i<available.size();i++){
+                  str+= "Game : " + i;
+               }
+               out.writeUTF(str);
             }
          } 
 
       } catch (IOException ex) { 
          System.out.println("-- Connection to user lost.");
       } finally { 
-         handlers.removeElement (this); 
-         broadcast(name +" left");
          try { 
             this.socket.close();
          } catch (IOException ex) { 
@@ -57,22 +72,5 @@ public class ClientHandler extends Thread {
          }  
       }
    }
-    
-
-   protected static void broadcast (String message) { 
-      synchronized (handlers) { 
-         Enumeration e = handlers.elements (); 
-         while (e.hasMoreElements()) { 
-            ClientHandler handler = (ClientHandler) e.nextElement(); 
-            try { 
-               System.out.println(message);
-               handler.out.writeUTF(message);
-               handler.out.flush();
-            } catch (IOException ex) { 
-               handler.stop (); 
-            } 
-         }
-      }
-   } 
 }
 
