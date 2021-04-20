@@ -33,7 +33,7 @@ public class OthelloPanel extends JPanel{
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == quitItem) {
-                System.exit(1);
+                client.disconnect();
             }
             if (e.getSource() == newGameItem) {
                 //game = new Othello();

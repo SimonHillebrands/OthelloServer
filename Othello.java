@@ -69,9 +69,9 @@ public class Othello{
 	}
 	boolean isValidMoveAvailable(){
 		for(int i = 0;i<possibleMoves.size();i++){
-			System.out.print(possibleMoves.get(i)[0]+1);
-			System.out.print(" , ");
-			System.out.println(possibleMoves.get(i)[1]+1);
+			// System.out.print(possibleMoves.get(i)[0]+1);
+			// System.out.print(" , ");
+			// System.out.println(possibleMoves.get(i)[1]+1);
 		}
 		if(possibleMoves.size() == 0){
 			return false;
@@ -200,6 +200,22 @@ public class Othello{
 		}
 
 		return str;
+	}
+	String getGameStatus(){
+		if(isGameOver()){
+			int winner = checkWinner();
+			String ret = "0";
+			if(winner == -1){
+				ret = "2";
+			}else if(winner == 1){
+				ret = "1";
+			}else if(winner == 0){
+				ret = "3";
+			}	
+			return ret;
+		}else{
+			return "0";
+		}
 	}
 	String string() {
 		String str = "\n ";

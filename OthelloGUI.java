@@ -1,10 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;  
+import java.awt.event.WindowListener;  
+import java.awt.event.WindowAdapter;
 
 
 class OthelloGUI {
     OthelloPanel p;
     GameClient client;
+    JFrame frame;
 
     public OthelloGUI(GameClient client){
         JButton [][] board = new JButton[8][8];
@@ -16,9 +20,14 @@ class OthelloGUI {
 
         this.client = client;
 
-        JFrame frame = new JFrame ("Othello");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        frame = new JFrame ("Othello");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+              client.disconnect();
+            }
+          });
 
         //this is creating the option file at the top of the panel (like the little bar thing) with two options, quit and new game
         fileMenu = new JMenu ("File");
@@ -41,6 +50,9 @@ class OthelloGUI {
         frame.setVisible(true);
 
     }
+    public void quit(){
+        frame.dispose();
+    }
     public void setBoard(String[][] b){
         this.p.updateBoard(b);
     }
@@ -60,6 +72,13 @@ class OthelloGUI {
         JFrame e = new JFrame();
         JOptionPane.showMessageDialog(e, "White is the winner!!");
     }
+    public void declareTiePopup() {
+        JFrame e = new JFrame();
+        JOptionPane.showMessageDialog(e, "It's a TIE!!");
+    }
+
+
+
 
     public static void main (String[] args){
     

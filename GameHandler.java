@@ -12,10 +12,10 @@ public class GameHandler extends Thread {
    DataInputStream guestIn; 
    DataOutputStream guestOut;
 
-   boolean guestJoined;
-
    String name;
    int id;
+
+   boolean isOver;
 
    Othello game;
 
@@ -23,6 +23,7 @@ public class GameHandler extends Thread {
    public GameHandler (String name, InetAddress host, InetAddress guest, int id, int port1, int port2) throws IOException { 
       this.name = name;
       this.id = id; 
+      isOver = false;
       this.game = new Othello();
 
       Socket hostSocket = new Socket(host, port1);
@@ -30,36 +31,37 @@ public class GameHandler extends Thread {
 
       hostIn = new DataInputStream(hostSocket.getInputStream());
       hostOut = new DataOutputStream(hostSocket.getOutputStream());
-      hostOut.writeUTF(game.getPossibleBoardString());
+      hostOut.writeUTF("0"+game.getPossibleBoardString());
 
-      System.out.println(game.getPossibleBoardString());
+     // System.out.println(game.getPossibleBoardString());
 
       guestIn = new DataInputStream(guestSocket.getInputStream());
       guestOut = new DataOutputStream(guestSocket.getOutputStream());
 
-      guestOut.writeUTF(game.getBoardString());
+      guestOut.writeUTF("0"+game.getBoardString());
    } 
     
    public void run () { 
 
       try { 
-         while (true) { 
+         while (!isOver) { 
                driver();           
          } 
 
       } catch (IOException ex) { 
-         System.out.println("-- Connection to user lost.");
+         System.out.println("-- Users disconnected.");
       } finally { 
          try { 
             this.hostSocket.close();
-            if(guestJoined){
-               this.guestSocket.close();
-            }
+            this.guestSocket.close();
             
-         } catch (IOException ex) { 
-            System.out.println("-- Socket to user already closed ?");
+         } catch (Exception e) { 
+           // System.out.println("-- Socket to user already closed ");
          }  
       }
+   }
+   boolean running(){
+      return isOver;
    }
    void driver() throws IOException {
       
@@ -78,25 +80,28 @@ public class GameHandler extends Thread {
 
          row--;
          col--;
-         System.out.println(line);
          if(game.isValidMove(row,col)){
             game.placeDisk(row,col);
 
             game.prepareNextTurn();
-            hostOut.writeUTF(game.string());
-            guestOut.writeUTF(game.string());
+            String w = game.getGameStatus();
+            // hostOut.writeUTF(w + game.string());
+            // guestOut.writeUTF(w + game.string());
 
-            System.out.println(game.string());
+            //System.out.println(game.string());
             
          }
       }
-      System.out.println(game.string());
+      String w = game.getGameStatus();
+      if(!w.equals("0")){
+         isOver = true;
+      }
       if(game.whosTurn() == -1){
-         hostOut.writeUTF(game.getPossibleBoardString());
-         guestOut.writeUTF(game.getBoardString());
+         hostOut.writeUTF(w + game.getPossibleBoardString());
+         guestOut.writeUTF(w + game.getBoardString());
       }else{
-         hostOut.writeUTF(game.getBoardString());
-         guestOut.writeUTF(game.getPossibleBoardString());         
+         hostOut.writeUTF(w + game.getBoardString());
+         guestOut.writeUTF(w + game.getPossibleBoardString());         
       }
       
    }

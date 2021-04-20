@@ -9,7 +9,7 @@ public class ClientHandler extends Thread {
    DataOutputStream out;
    String name;
    InetAddress inet;
-   int count = 0;
+   int counter = 0;
    protected static ArrayList<GameHandler> games = new ArrayList<GameHandler>();
    protected static ArrayList<InetAddress> hosts = new ArrayList<InetAddress>();
    protected static ArrayList<Boolean> available = new ArrayList<Boolean>();
@@ -46,7 +46,7 @@ public class ClientHandler extends Thread {
                 }else{
                   //The game is found
                   out.writeUTF("2");
-                  games.add(new GameHandler("name", hosts.get(gameID),this.inet,count, 3031, 3032)); 
+                  games.add(new GameHandler("name", hosts.get(gameID),this.inet,counter, 3030+ (gameID*2)+1, 3030+((gameID+1)*2))); 
                   games.get(games.size()-1).start(); 
                   System.out.println("Client " + this.inet+" joined game "+ gameID);
                   available.set(gameID,false);
@@ -56,14 +56,29 @@ public class ClientHandler extends Thread {
             }else if(command.equals("list:")){
                String str = "";
                for(int i = 0;i<available.size();i++){
-                  str+= "Game : " + i;
+                  str+= "Game : " + i+"\n";
                }
                out.writeUTF(str);
+            }
+            else if (command.startsWith("over")){
+               counter--;
+               int id =Integer.parseInt(command.substring(5,command.length()));
+               games.remove(id);
+               hosts.remove(id);
+               available.remove(id);
+               System.out.println("Game " + id +" is over");
+               
+            }
+            else if(command.equals("close")){
+               this.socket.close();
+               System.out.println("User "+this.inet+" left");
             }
          } 
 
       } catch (IOException ex) { 
          System.out.println("-- Connection to user lost.");
+         ex.printStackTrace();
+
       } finally { 
          try { 
             this.socket.close();

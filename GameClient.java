@@ -12,9 +12,11 @@ public class GameClient {
    public OthelloGUI gui;
 
    private Socket socket;
+   private ServerSocket wsocket;
    private DataInputStream in;
    private DataOutputStream out;
    boolean turn;
+   String winner;
    String[][] board;
    boolean isRunning;
    public GameClient(String server,int port,boolean host,int id) {
@@ -25,7 +27,7 @@ public class GameClient {
 
       this.turn = host;
       try {
-         ServerSocket wsocket = new ServerSocket(port);
+         wsocket = new ServerSocket(port);
          socket = wsocket.accept();
 
          in = new DataInputStream(socket.getInputStream());
@@ -41,7 +43,9 @@ public class GameClient {
          
          while (isRunning) {
             String[] str = in.readUTF().split("");
-            int counter = 0;
+            winner = str[0];
+            
+            int counter = 1;
             boolean flag = false;
             for(int i = 0; i<8;i++){ 
                for(int j = 0; j<8;j++){
@@ -54,6 +58,17 @@ public class GameClient {
 
             }
             gui.setBoard(board);
+            if(winner.equals("2")){
+               isRunning = false;
+               gui.declareWinnerBlackPopup();
+            }else if(winner.equals("1")){
+               isRunning = false;
+               gui.declareWinnerWhitePopup();
+            }else if(winner.equals("3")){
+               isRunning = false;
+               gui.declareTiePopup();
+            }
+
             if(flag){
                this.turn = true;
             }else{
@@ -62,8 +77,9 @@ public class GameClient {
             
          }
       }	catch (Exception e)	{ 
-         e.printStackTrace();
+         //e.printStackTrace();
       }
+      disconnect();
    }
    
    protected void sendTextToGame(int row, int col) {
@@ -87,9 +103,12 @@ public class GameClient {
    }
    protected void disconnect() {
       try {
+         wsocket.close();
          socket.close();
+         gui.quit();
+         this.isRunning = false;
       } catch (IOException e) {
-         e.printStackTrace();
+         //e.printStackTrace();
       }
    }
 		
@@ -98,8 +117,9 @@ public class GameClient {
 
       boolean clientgo = true;
       String server = "127.0.0.1";
-      int port = 3030;
+      int serverPort = 3030;
       String sentence;
+      int port;
 
 
       System.out.println("Welcome to the Othello game \n Commands:\nconnect servername port# connects to a specified server \nlist: lists available games with the gameID\n create creates a new game\njoin gameID Joins the game with the id gameID\n close terminates the program");
@@ -110,7 +130,7 @@ public class GameClient {
       if(sentence.startsWith("connect")){
          tokens.nextToken(); //skip the connect command
          port = Integer.parseInt(tokens.nextToken());
-         Socket ControlSocket= new Socket(server, port);
+         Socket ControlSocket= new Socket(server, serverPort);
 
          DataOutputStream outToServer = new DataOutputStream(ControlSocket.getOutputStream()); 
          DataInputStream inFromServer = new DataInputStream(ControlSocket.getInputStream());
@@ -131,17 +151,20 @@ public class GameClient {
                      outToServer.writeUTF(tokens.nextToken());
                      String id = inFromServer.readUTF();
                      System.out.println("Your game has been created with ID: " + id);
-                     GameClient c = new GameClient(server,port+1,true,0);
+                     int port1 = port+ (Integer.parseInt(id)*2)+1;
+                     GameClient c = new GameClient(server, port1,true,0);
+                     outToServer.writeUTF("over " +id );
                   }catch (Exception e)	{ 
                      e.printStackTrace();
                      System.out.println("Connection Failed");
-                     clientgo = false;
+                     //clientgo = false;
                   }
                   }
                else if(sentence.startsWith("join")){
                   try{
                      outToServer.writeUTF(tokens.nextToken());
-                     outToServer.writeUTF(tokens.nextToken());
+                     String id = tokens.nextToken();
+                     outToServer.writeUTF(id);
                      String status = inFromServer.readUTF();
                      if(status.equals("0")){
                         System.out.println("This game does not exist");
@@ -149,17 +172,21 @@ public class GameClient {
                         System.out.println("This game is already full");
                      }else if(status.equals("2")){
                         System.out.println("You have joined the game");
-                        GameClient c = new GameClient(server,port+2,false,0);
+                        int port1 = port+ (Integer.parseInt(id)+1)*2;
+                        GameClient c = new GameClient(server,port1,false,0);
+                        //outToServer.writeUTF("over");
+                        //outToServer.writeUTF("0");
                      }
 
                      }catch (Exception e)	{ 
                         e.printStackTrace();
                         System.out.println("Connection Failed");
-                        clientgo = false;
+                       // clientgo = false;
                      }
                   }
                   else{
                      if(sentence.equals("close")){
+                        outToServer.writeUTF("close");
                         clientgo = false;
                         ControlSocket.close();
                         System.out.println("Bye Bye!");
