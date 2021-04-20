@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Othello{
 	int[][] board= new int[8][8];
@@ -203,16 +202,20 @@ public class Othello{
 	}
 	String getGameStatus(){
 		if(isGameOver()){
-			int winner = checkWinner();
-			String ret = "0";
-			if(winner == -1){
-				ret = "2";
-			}else if(winner == 1){
-				ret = "1";
-			}else if(winner == 0){
-				ret = "3";
-			}	
-			return ret;
+			prepareNextTurn();
+			if(isGameOver()){
+				int winner = checkWinner();
+				String ret = "0";
+				if(winner == -1){
+					ret = "2";
+				}else if(winner == 1){
+					ret = "1";
+				}else if(winner == 0){
+					ret = "3";
+				}	
+				return ret;
+			}
+			return "0";
 		}else{
 			return "0";
 		}

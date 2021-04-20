@@ -26,8 +26,8 @@ public class GameHandler extends Thread {
       isOver = false;
       this.game = new Othello();
 
-      Socket hostSocket = new Socket(host, port1);
-      Socket guestSocket = new Socket(guest, port2);
+      hostSocket = new Socket(host, port1);
+      guestSocket = new Socket(guest, port2);
 
       hostIn = new DataInputStream(hostSocket.getInputStream());
       hostOut = new DataOutputStream(hostSocket.getOutputStream());

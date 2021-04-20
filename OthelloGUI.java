@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowEvent;  
-import java.awt.event.WindowListener;  
+import java.awt.event.WindowEvent;   
 import java.awt.event.WindowAdapter;
 
 
@@ -11,7 +10,6 @@ class OthelloGUI {
     JFrame frame;
 
     public OthelloGUI(GameClient client){
-        JButton [][] board = new JButton[8][8];
         JPanel panel;
         JMenuItem quitItem;
         JMenuItem newGameItem;
@@ -26,6 +24,7 @@ class OthelloGUI {
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
               client.disconnect();
+              frame.dispose();
             }
           });
 

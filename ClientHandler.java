@@ -46,6 +46,7 @@ public class ClientHandler extends Thread {
                 }else{
                   //The game is found
                   out.writeUTF("2");
+                  counter++;
                   games.add(new GameHandler("name", hosts.get(gameID),this.inet,counter, 3030+ (gameID*2)+1, 3030+((gameID+1)*2))); 
                   games.get(games.size()-1).start(); 
                   System.out.println("Client " + this.inet+" joined game "+ gameID);
@@ -55,17 +56,15 @@ public class ClientHandler extends Thread {
 
             }else if(command.equals("list:")){
                String str = "";
-               for(int i = 0;i<available.size();i++){
-                  str+= "Game : " + i+"\n";
+               for(int i = counter;i<available.size();i++){
+                  str+= "Game : " + (i)+"\n";
                }
                out.writeUTF(str);
             }
             else if (command.startsWith("over")){
-               counter--;
                int id =Integer.parseInt(command.substring(5,command.length()));
-               games.remove(id);
-               hosts.remove(id);
-               available.remove(id);
+               counter++;
+
                System.out.println("Game " + id +" is over");
                
             }

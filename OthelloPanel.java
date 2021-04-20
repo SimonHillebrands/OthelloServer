@@ -8,7 +8,6 @@ public class OthelloPanel extends JPanel{
     private JButton [][] board;
 
     private JPanel panel1;
-    private int player;
     private ButtonListener listen;
     private JMenuItem quitItem;
     private JMenuItem newGameItem;

@@ -1,10 +1,6 @@
 import java.net.*;
 import java.io.*;
-import java.awt.event.*;
 import java.util.*;
-import java.text.*;
-import java.lang.*;
-import javax.swing.*;
 
 public class GameClient {
 		
@@ -32,16 +28,9 @@ public class GameClient {
 
          in = new DataInputStream(socket.getInputStream());
          out = new DataOutputStream(socket.getOutputStream());
-
-         // String b;
-         // if(host){
-         //    b = "1";
-         // }else{
-         //    b = "0";
-         // }
-         // out.writeUTF(b);
          
          while (isRunning) {
+            Thread.sleep(10);
             String[] str = in.readUTF().split("");
             winner = str[0];
             
@@ -79,6 +68,7 @@ public class GameClient {
       }	catch (Exception e)	{ 
          //e.printStackTrace();
       }
+      gui.quit();
       disconnect();
    }
    
@@ -105,7 +95,6 @@ public class GameClient {
       try {
          wsocket.close();
          socket.close();
-         gui.quit();
          this.isRunning = false;
       } catch (IOException e) {
          //e.printStackTrace();
@@ -122,7 +111,7 @@ public class GameClient {
       int port;
 
 
-      System.out.println("Welcome to the Othello game \n Commands:\nconnect servername port# connects to a specified server \nlist: lists available games with the gameID\n create creates a new game\njoin gameID Joins the game with the id gameID\n close terminates the program");
+      System.out.println("Welcome to the Othello game \nCommands:\nconnect servername port# connects to a specified server \nlist: lists available games with the gameID\ncreate creates a new game\njoin gameID Joins the game with the id gameID\nclose terminates the program");
       BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in)); 
 
       sentence = inFromUser.readLine();

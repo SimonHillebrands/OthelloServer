@@ -1,6 +1,4 @@
-import java.net.*; 
 import java.io.*; 
-import java.util.*;
 public class Driver{
 public static void main (String args[]) throws IOException { 
     BufferedReader reader = new BufferedReader( new InputStreamReader(System.in));
